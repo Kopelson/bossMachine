@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 
 module.exports = app;
 
@@ -12,13 +13,20 @@ const PORT = process.env.PORT || 4001;
 const cors = require('cors');
 app.use(cors());
 
-// Add middleware for parsing request bodies here:
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
+// Define middleware here
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// //middle are to server public files
+app.use(express.static('public'));
 
 // Mount your existing apiRouter below at the '/api' path.
 const apiRouter = require('./server/api');
 app.use('/api', apiRouter);
+
+app.get("*", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // This conditional is here for testing purposes:
 if (!module.parent) { 
